@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Windows崩溃统计</title>
+  <meta charset="UTF-8">
+  <link href="bootstrap-icons.css" rel="stylesheet" />
+  <link href="css/bootstrap.css" rel="stylesheet" />
+  <link href="bootstrap-table.css" rel="stylesheet" />
+  <script src="popper.js" charset="UTF-8"></script>
+  <script src="jquery-3.7.0.js" charset="UTF-8"></script>
+  <script src="bootstrap.js" charset="UTF-8"></script>
+  <script src="bootstrap-table.js" charset="UTF-8"></script>
+  <script src="locale/bootstrap-table-zh-CN.js" charset="UTF-8"></script>
+  <script src="FileSaver.js" charset="UTF-8"></script>
+</head>
+
+<body>
+  <table id="table" data-toggle="table" data-height="800" data-search="true"
+    data-click-to-select="true" data-show-columns="true" data-show-columns-toggle-all="true"
+    data-side-pagination="client" data-pagination="true" data-show-toggle="true" data-url="data.json"
+    data-ajax-options="ajaxOptions" data-page-list="[10, 25, 50, 100, all]">
+    <thead>
+      <tr>
+        <th data-field="state" data-checkbox="true"></th>
+        <th data-field="title" data-sortable="true">标题</th>
+        <th data-field="dump count" data-sortable="true">崩溃次数</th>
+        <th data-field="user count" data-sortable="true">崩溃人数</th>
+        <th data-field="version" data-sortable="true">版本号</th>
+        <th data-field="last report" data-sortable="true">最近反馈日期</th>
+        <th data-field="dump url" data-sortable="true" data-formatter="urlFormatter">下载地址</th>
+        <th data-field="log url" data-sortable="false" data-formatter="urlFormatter">最新日志</th>
+      </tr>
+    </thead>
+  </table>
+
+
+  <script>
+
+    window.ajaxOptions = {
+      beforeSend: function (xhr) {
+        xhr.setRequestHeader('If-Modified-Since','0')
+      }
+    }
+
+    function operateFormatter(value, row, index) {
+      if (value == "close") {
+        return value
+      }
+      else {
+        return [
+          '<a class="close" href="javascript:void(0)">',
+          '</a>  '
+        ].join(value)
+      }
+    }
+
+    function urlFormatter(value, row, index) {
+      return "<a href=" + value + ">" + value + "</a>"
+    }
+
+    window.operateEvents = {
+      'click .close': function (e, value, row, index) {
+        // alert('You click close action, row: ' + JSON.stringify(row))
+        $.ajax({
+          type: "GET",
+          url: "/update/closedData?url=" + row["dump url"],
+          dataType:"json",
+          success: function(data){
+            
+          }
+        });
+      }
+    }
+  </script>
+
+</body>
+
+</html>
